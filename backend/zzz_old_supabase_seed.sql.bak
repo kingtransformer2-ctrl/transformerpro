@@ -1,0 +1,187 @@
+-- Seed or repair the special hotel manager account used for waiter access setup.
+-- This creates a real Supabase auth user for admin@admin.com and ensures it has
+-- the manager role in public.user_roles.
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto SCHEMA extensions;
+
+DO $$
+DECLARE
+  v_email CONSTANT text := 'admin@admin.com';
+  v_password CONSTANT text := '123456';
+  v_user_id uuid;
+BEGIN
+  -- Ensure the manager role exists in case this database was initialized incompletely.
+  INSERT INTO public.role_permissions (role, pos_routes, hotel_routes, is_system, description)
+  VALUES (
+    'manager',
+    ARRAY['/settings', '/reports', '/stock', '/products', '/loans', '/', '/pos', '/sales', '/customers', '/scanner', '/notifications'],
+    ARRAY[
+      '/hotel/settings',
+      '/hotel/staff',
+      '/hotel/attendance',
+      '/hotel/shifts',
+      '/hotel/shift-report',
+      '/hotel/reports',
+      '/hotel/billing',
+      '/hotel/finance',
+      '/hotel/service-menu',
+      '/hotel/restaurant-dashboard',
+      '/hotel',
+      '/hotel/pos',
+      '/hotel/rooms',
+      '/hotel/tables',
+      '/hotel/bookings',
+      '/hotel/new-booking',
+      '/hotel/check-in-out',
+      '/hotel/guests',
+      '/hotel/housekeeping'
+    ],
+    true,
+    'Management and operational access'
+  )
+  ON CONFLICT (role) DO NOTHING;
+
+  SELECT id
+  INTO v_user_id
+  FROM auth.users
+  WHERE lower(email) = lower(v_email)
+  LIMIT 1;
+
+  IF v_user_id IS NULL THEN
+    v_user_id := gen_random_uuid();
+
+    INSERT INTO auth.users (
+      instance_id,
+      id,
+      aud,
+      role,
+      email,
+      encrypted_password,
+      email_confirmed_at,
+      confirmation_token,
+      recovery_token,
+      email_change_token_new,
+      email_change,
+      email_change_token_current,
+      email_change_confirm_status,
+      raw_app_meta_data,
+      raw_user_meta_data,
+      is_super_admin,
+      created_at,
+      updated_at,
+      phone,
+      phone_change,
+      phone_change_token,
+      reauthentication_token,
+      is_sso_user,
+      deleted_at
+    )
+    VALUES (
+      '00000000-0000-0000-0000-000000000000',
+      v_user_id,
+      'authenticated',
+      'authenticated',
+      v_email,
+      extensions.crypt(v_password, extensions.gen_salt('bf', 10)),
+      now(),
+      '',
+      '',
+      '',
+      '',
+      '',
+      0,
+      jsonb_build_object(
+        'provider', 'email',
+        'providers', jsonb_build_array('email'),
+        'role', 'manager'
+      ),
+      jsonb_build_object(
+        'first_name', 'Hotel',
+        'last_name', 'Manager',
+        'role', 'manager'
+      ),
+      false,
+      now(),
+      now(),
+      null,
+      '',
+      '',
+      '',
+      false,
+      null
+    );
+  ELSE
+    UPDATE auth.users
+    SET
+      aud = 'authenticated',
+      role = 'authenticated',
+      encrypted_password = extensions.crypt(v_password, extensions.gen_salt('bf', 10)),
+      email_confirmed_at = COALESCE(email_confirmed_at, now()),
+      raw_app_meta_data = COALESCE(raw_app_meta_data, '{}'::jsonb) || jsonb_build_object(
+        'provider', 'email',
+        'providers', jsonb_build_array('email'),
+        'role', 'manager'
+      ),
+      raw_user_meta_data = COALESCE(raw_user_meta_data, '{}'::jsonb) || jsonb_build_object(
+        'first_name', 'Hotel',
+        'last_name', 'Manager',
+        'role', 'manager'
+      ),
+      updated_at = now(),
+      deleted_at = null
+    WHERE id = v_user_id;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM auth.identities
+    WHERE user_id = v_user_id
+      AND provider = 'email'
+  ) THEN
+    INSERT INTO auth.identities (
+      id,
+      user_id,
+      identity_data,
+      provider,
+      provider_id,
+      last_sign_in_at,
+      created_at,
+      updated_at
+    )
+    VALUES (
+      gen_random_uuid(),
+      v_user_id,
+      jsonb_build_object(
+        'sub', v_user_id::text,
+        'email', v_email,
+        'email_verified', true
+      ),
+      'email',
+      v_email,
+      now(),
+      now(),
+      now()
+    );
+  END IF;
+
+  INSERT INTO public.user_roles (user_id, role)
+  VALUES (v_user_id, 'manager')
+  ON CONFLICT (user_id) DO UPDATE
+  SET
+    role = EXCLUDED.role,
+    updated_at = now();
+
+  UPDATE public.profiles
+  SET
+    email = v_email,
+    first_name = 'Hotel',
+    last_name = 'Manager',
+    updated_at = now()
+  WHERE user_id = v_user_id;
+
+  IF NOT FOUND THEN
+    INSERT INTO public.profiles (user_id, email, first_name, last_name)
+    VALUES (v_user_id, v_email, 'Hotel', 'Manager');
+  END IF;
+END
+$$;

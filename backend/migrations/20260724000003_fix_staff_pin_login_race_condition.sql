@@ -1,0 +1,7 @@
+-- Fix StaffPinLogin duplicate submission/race condition
+-- The component had both auto-submit (6 digits) and Enter key handlers
+-- that could fire simultaneously or near-simultaneously on fast input.
+--
+-- Frontend fix: StaffPinLogin.tsx now gates all submission paths through
+-- a single isLoading guard so PIN verification is never double-submitted
+-- and the user sees only one success/failure outcome per PIN entry.

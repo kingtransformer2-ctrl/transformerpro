@@ -1,0 +1,306 @@
+/* ═══════════════════════════════════════════════════════════════════
+   TRANSFORMER POS — Professional Advanced Design System
+   Colors: Red Primary, Dark Navy, Premium Accents
+   ═══════════════════════════════════════════════════════════════════ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Neutral surface ── */
+    --background:        0 0% 100%;
+    --foreground:        222 47% 11%;
+
+    /* ── Card / popover ── */
+    --card:              0 0% 100%;
+    --card-foreground:   222 47% 11%;
+    --popover:           0 0% 100%;
+    --popover-foreground:222 47% 11%;
+
+    /* ── Brand: Red Primary (matches original screenshots) ── */
+    --primary:           347 89% 46%; /* #E11D48 rose-600 */
+    --primary-foreground:0 0% 100%;
+
+    /* ── Secondary: Dark Navy ── */
+    --secondary:         222 47% 11%;
+    --secondary-foreground:0 0% 98%;
+
+    /* ── Muted ── */
+    --muted:             210 20% 96%;
+    --muted-foreground:  215 16% 47%;
+
+    /* ── Accent: Soft Red ── */
+    --accent:            347 77% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    /* ── Destructive: Bold Red ── */
+    --destructive:       0 84% 60%;
+    --destructive-foreground:0 0% 100%;
+
+    /* ── Borders / inputs ── */
+    --border:            214 32% 91%;
+    --input:             214 32% 91%;
+    --ring:              347 89% 46%;
+
+    /* ── Shape ── */
+    --radius:            0.875rem; /* 14px — modern rounded */
+
+    /* ── Custom design tokens ── */
+    --navy:              222 47% 11%;  /* dark header/sidebar */
+    --navy-foreground:   0 0% 98%;
+  }
+
+  .dark {
+    --background:        222 47% 8%;
+    --foreground:        210 20% 98%;
+    --card:              222 47% 11%;
+    --card-foreground:   210 20% 98%;
+    --popover:           222 47% 11%;
+    --popover-foreground:210 20% 98%;
+    --primary:           347 89% 52%;
+    --primary-foreground:0 0% 100%;
+    --secondary:         222 47% 11%;
+    --secondary-foreground:0 0% 98%;
+    --muted:             217 33% 17%;
+    --muted-foreground:  215 20% 65%;
+    --accent:            347 77% 53%;
+    --accent-foreground: 0 0% 100%;
+    --destructive:       0 72% 51%;
+    --destructive-foreground:0 0% 100%;
+    --border:            217 33% 25%;
+    --input:             217 33% 25%;
+    --ring:              347 89% 52%;
+  }
+}
+
+/* ── Reset & base ─────────────────────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Inter", "Segoe UI", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+      "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  /* Scrollbar styling — thin & branded */
+  ::-webkit-scrollbar       { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--muted)); }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 999px;
+    border: 2px solid hsl(var(--muted));
+    transition: all 0.25s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.7);
+    border-color: hsl(var(--primary) / 0.1);
+  }
+
+  /* Smooth selection highlight */
+  ::selection {
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--foreground));
+  }
+}
+
+/* ── Utility classes ──────────────────────────────────────────────── */
+@layer utilities {
+  /* Subtle dot-grid background used on auth pages */
+  .cyber-grid {
+    background-size: 32px 32px;
+    background-image:
+      linear-gradient(to right,  rgba(0,0,0,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px);
+  }
+
+  /* Glass card surface */
+  .glass-morphism {
+    @apply bg-white/40 backdrop-blur-2xl border border-white/40 shadow-xl;
+  }
+
+  /* Navy dark surface (dashboard header, sidebar) */
+  .surface-navy {
+    background: hsl(var(--navy));
+    color: hsl(var(--navy-foreground));
+  }
+
+  /* Modern gradient accents */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(347 89% 46%), hsl(355 78% 38%));
+  }
+  .gradient-secondary {
+    background: linear-gradient(135deg, hsl(222 47% 11%), hsl(220 39% 18%));
+  }
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(347 77% 53%), hsl(347 89% 46%));
+  }
+  .gradient-destructive {
+    background: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 72% 51%));
+  }
+
+  /* Premium card shadows */
+  .shadow-premium {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(0 0 0 / 0.05);
+  }
+  .shadow-premium-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(0 0 0 / 0.05);
+  }
+  .shadow-premium-xl {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1), 0 0 0 1px rgb(0 0 0 / 0.05);
+  }
+
+  /* Tabular numbers everywhere we show figures */
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  /* Hide scrollbar but keep scrollability */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Micro top-accent stripe (used on cards & dialogs) */
+  .stripe-brand::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 4px;
+    border-radius: 9999px 9999px 0 0;
+    background: linear-gradient(90deg, hsl(347 89% 46% / 0.4), hsl(347 89% 46%), hsl(347 89% 46% / 0.4));
+  }
+
+  /* Premium text gradients */
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(347 89% 46%), hsl(347 77% 53%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* ── Component overrides ──────────────────────────────────────────── */
+@layer components {
+  /* ── Sidebar active item ── */
+  .sidebar-item-active {
+    @apply bg-primary text-primary-foreground font-semibold;
+  }
+
+  /* ── Data table shared styles ── */
+  .data-table thead tr {
+    @apply bg-muted/30 border-b border-border/60;
+  }
+  .data-table thead th {
+    @apply text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground/70 py-3.5;
+  }
+  .data-table tbody tr {
+    @apply border-b border-border/40 transition-all duration-200 hover:bg-muted/40 hover:shadow-sm;
+  }
+  .data-table tbody td {
+    @apply py-3.5 text-sm;
+  }
+
+  /* ── KPI stat card ── */
+  .kpi-card {
+    @apply relative overflow-hidden rounded-2xl border bg-card p-6 transition-all duration-300 hover:shadow-premium-xl hover:-translate-y-1 shadow-premium;
+  }
+
+  /* ── Section divider with label ── */
+  .section-label {
+    @apply text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60;
+  }
+
+  /* ── Badge overrides: tighter, rounder ── */
+  [data-badge] {
+    @apply rounded-full text-[11px] font-bold uppercase tracking-wider;
+  }
+
+  /* ── Input styles ── */
+  input, select, textarea {
+    @apply transition-all duration-200;
+  }
+}
+
+/* ── Animations ───────────────────────────────────────────────────── */
+@keyframes shake {
+  0%,  100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shake   { animation: shake 0.5s ease-in-out; }
+.animate-fade-up { animation: fade-up 0.3s ease-out both; }
+.animate-scale-in{ animation: scale-in 0.25s ease-out both; }
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted) / 0.6) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* ── Print styles ─────────────────────────────────────────────────── */
+@media print {
+  body * { visibility: hidden; }
+
+  .print-only,
+  [role="dialog"] [class*="print:max-w-none"],
+  [role="dialog"] [class*="print:max-w-none"] * {
+    visibility: visible;
+  }
+
+  [role="dialog"] [class*="print:max-w-none"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  .print\:hidden { display: none !important; }
+}

@@ -1,0 +1,32 @@
+-- Fix the enum cast issue in prevent_hotel_table_release_before_settlement trigger.
+-- COALESCE(OLD.status, '') casts empty string to hotel_table_status enum which fails.
+-- Use 'free' as default instead of empty string.
+
+CREATE OR REPLACE FUNCTION public.prevent_hotel_table_release_before_settlement()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_old_status public.hotel_table_status;
+BEGIN
+  -- Safely default OLD.status to 'free' if NULL (prevents enum cast error)
+  v_old_status := COALESCE(OLD.status, 'free'::public.hotel_table_status);
+  
+  IF NEW.status = 'free'
+     AND v_old_status <> 'free'
+     AND EXISTS (
+       SELECT 1
+       FROM public.hotel_table_sessions AS s
+       WHERE s.table_id = NEW.id
+         AND s.status IN ('active', 'partially_paid')
+         AND COALESCE(s.payment_status, 'pending') <> 'paid'
+     ) THEN
+    RAISE EXCEPTION 'Table % cannot be released before final settlement', COALESCE(NEW.table_number, NEW.id::text)
+      USING ERRCODE = 'P0001';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;

@@ -1,0 +1,1 @@
+UPDATE hotel_staff SET pin = '00890' WHERE first_name = 'Michael' AND last_name = 'Brown' AND role = 'manager';

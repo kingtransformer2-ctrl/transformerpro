@@ -1,0 +1,28 @@
+import { useState, useEffect } from "react";
+
+/**
+ * Hook to track online/offline status.
+ * Zero dependency on Supabase for maximum speed.
+ */
+export function useSupabaseStatus() {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  return { 
+    isOnline, 
+    status: isOnline ? 'connected' : 'disconnected',
+    errorMessage: isOnline ? null : 'Browser is offline'
+  };
+}
