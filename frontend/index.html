@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: http://localhost:3000 ws://localhost:3000 http://127.0.0.1:7777; connect-src 'self' http://localhost:3000 ws://localhost:3000 http://127.0.0.1:7777; img-src 'self' data: blob: https://www.transparenttextures.com https://images.unsplash.com; font-src 'self' data:; media-src 'self' https://assets.mixkit.co;" />
+   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: http://localhost:3000 ws://localhost:3000 http://127.0.0.1:7777 https://transformerpro-backend.onrender.com; connect-src 'self' http://localhost:3000 ws://localhost:3000 http://127.0.0.1:7777 https://transformerpro-backend.onrender.com; img-src 'self' data: blob: https://www.transparenttextures.com https://images.unsplash.com; font-src 'self' data:; media-src 'self' https://assets.mixkit.co;" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TRANSFORMER POS System</title>
     <meta name="description" content="transformer Generated Project" />
@@ -11,12 +11,10 @@
     <meta property="og:description" content="transformer Generated Project" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://kimihurura.pages.dev/opengraph-image-p98pqg.png" />
-
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@transformer" />
     <meta name="twitter:image" content="https://kimihurura.pages.dev/opengraph-image-p98pqg.png" />
   </head>
-
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
