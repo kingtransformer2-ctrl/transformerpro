@@ -9,9 +9,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL?.includes('localhost')
+    ? false
+    : { rejectUnauthorized: false }
 });
-
 const app = express();
 app.use(cors());
 app.use(express.json());
