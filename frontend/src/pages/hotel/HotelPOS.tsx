@@ -1430,17 +1430,16 @@ const handlePlaceOrder = async () => {
 
       // ─── Customer upsert (fire-and-forget) ───
       if (orderType === 'takeaway' && (takeawayCustomerName || takeawayCustomerPhone)) {
-        void findOrCreateCustomer({
-          name: takeawayCustomerName || undefined,
-          phone: takeawayCustomerPhone || undefined,
-        }).catch(() => {});
+       void findOrCreateCustomer(
+          takeawayCustomerName || '',
+          takeawayCustomerPhone || undefined
+        ).catch(() => {});
       }
       if (orderType === 'delivery' && (deliveryCustomerName || deliveryPhone || deliveryAddress)) {
-        void findOrCreateCustomer({
-          name: deliveryCustomerName || undefined,
-          phone: deliveryPhone || undefined,
-          address: deliveryAddress || undefined,
-        }).catch(() => {});
+        void findOrCreateCustomer(
+          deliveryCustomerName || '',
+          deliveryPhone || undefined,
+          { address: deliveryAddress || undefined }
       }
 
       // ─── Payment handling moved to Billing POS Handle only ───
