@@ -481,6 +481,12 @@ export const apiClient = {
       },
     })
   },
+  channel: (_name: string) => ({
+    on: (_event: string, _filter: any, _callback: (...args: any[]) => void) => ({
+      subscribe: () => ({ _stub: true }),
+    }),
+  }),
+  removeChannel: (_channel: any) => {},
   removeAllChannels: async () => {}
 };
 
