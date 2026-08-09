@@ -174,11 +174,13 @@ export default function ShiftReport() {
                 <SelectContent>
                   {filteredShifts.map(s => (
                     <SelectItem key={s.id} value={s.id}>
-                      <div className="flex items-center gap-3">
-                        <span className="font-semibold">{s.shift_label}</span>
-                        <span className="text-[10px] text-slate-400 font-mono">{format(new Date(s.opened_at), 'MMM d, HH:mm')}</span>
-                      </div>
-                    </SelectItem>
+  <div className="flex items-center gap-3">
+    <span className="font-semibold">
+      {s.staff ? `${s.staff.first_name} ${s.staff.last_name}` : s.shift_label}
+    </span>
+    <span className="text-[10px] text-slate-400 font-mono">{format(new Date(s.opened_at), 'MMM d, HH:mm')}</span>
+  </div>
+</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -237,7 +239,9 @@ export default function ShiftReport() {
 
                     {/* Shift label */}
                     <div>
-                      <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">{shift.shift_label}</h2>
+                     <h2 className="text-xl font-black text-slate-900 tracking-tight leading-none">
+  {shift.staff ? `${shift.staff.first_name} ${shift.staff.last_name}'s Shift` : shift.shift_label}
+</h2>
                       <p className="text-xs text-slate-400 font-medium mt-1">
                         {format(new Date(shift.opened_at), 'EEEE, MMMM d, yyyy')}
                       </p>
