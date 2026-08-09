@@ -458,7 +458,11 @@ export function filterOrdersForStaff<T extends Pick<HotelOrder, 'waiter_id' | 's
   if (isWaiterStaff(staff) && staff?.staff_id) {
     filtered = filtered.filter((order) => isOrderOwnedByStaff(order, staff.staff_id));
   } else if (isCashierStaff(staff) && !isManagerLikeStaff(staff)) {
-    filtered = filtered.filter((order) => isHandoverOrderStatus(order.status));
+    if (filters?.status?.length) {
+      filtered = filtered.filter((order) => filters.status!.includes(order.status));
+    } else {
+      filtered = filtered.filter((order) => isHandoverOrderStatus(order.status));
+    }
   }
 
   if (filters?.waiterId) {
