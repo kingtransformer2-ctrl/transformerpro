@@ -1254,7 +1254,8 @@ if (error) {
 }
 if (!remote) return [];
       
-      const filteredRemote = filterOrdersForStaff(remote as any, activeStaff, monitorFilters);
+     const filteredRemote = filterOrdersForStaff(remote as any, activeStaff, monitorFilters);
+      console.log('[useMonitorOrders] raw count:', remote.length, 'filtered count:', filteredRemote.length, 'activeStaff:', activeStaff);
       return recalculateAllOrderTotals(sortOrdersNewestFirst(filteredRemote));
     },
     enabled,
@@ -1262,6 +1263,7 @@ if (!remote) return [];
     refetchOnWindowFocus: false,
     refetchOnMount: enabled ? 'always' : false,
     refetchInterval: enabled ? refetchIntervalMs : false,
+    retry: 1,
   });
 }
 
