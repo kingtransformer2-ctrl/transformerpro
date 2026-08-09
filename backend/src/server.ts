@@ -314,13 +314,20 @@ app.post('/api/rpc/:functionName', async (req, res) => {
           const openingCash = Number(p_opening_cash || 0);
           const openingNotes = p_opening_notes && String(p_opening_notes).trim() !== '' ? String(p_opening_notes).trim() : null;
 
-          const insertResult = await client.query(
+         const insertResult = await client.query(
             `INSERT INTO public.hotel_staff_shifts (
               staff_id, staff_role, shift_label, status,
               opening_cash, opening_notes, opened_at, started_at
             ) VALUES ($1, $2, $3, 'ACTIVE', $4, $5, NOW(), NOW())
             RETURNING *`,
             [p_staff_id, normalizedRole, normalizedLabel, openingCash, openingNotes]
+          );
+
+          await client.query(
+            `INSERT INTO public.hotel_shift_logs (
+              shift_id, staff_id, action_type, description, created_at
+            ) VALUES ($1, $2, 'shift_opened', $3, NOW())`,
+            [insertResult.rows[0].id, p_staff_id, `Shift opened with opening cash ${openingCash}`]
           );
 
           await client.query('COMMIT');
@@ -571,6 +578,18 @@ app.post('/api/rpc/:functionName', async (req, res) => {
               totalItemsCount,
               `Shift closed. Cash difference: ${difference >= 0 ? '+' : ''}${difference.toFixed(2)}`,
               p_shift_id,
+            ]
+          );
+
+          await client.query(
+            `INSERT INTO public.hotel_shift_logs (
+              shift_id, staff_id, action_type, description, amount, created_at
+            ) VALUES ($1, $2, 'shift_closed', $3, $4, NOW())`,
+            [
+              p_shift_id,
+              shift.staff_id,
+              `Shift closed. Cash difference: ${difference >= 0 ? '+' : ''}${difference.toFixed(2)}`,
+              difference,
             ]
           );
 
