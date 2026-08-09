@@ -481,11 +481,20 @@ export const apiClient = {
       },
     })
   },
-  channel: (_name: string) => ({
-    on: (_event: string, _filter: any, _callback: (...args: any[]) => void) => ({
-      subscribe: () => ({ _stub: true }),
-    }),
-  }),
+  channel: (_name: string) => {
+  const chainable: any = {
+    on: (_event: string, _filterOrCallback: any, _callback?: (...args: any[]) => void) => chainable,
+    subscribe: (_callback?: (status: string, err?: any) => void) => {
+      // No real realtime backend — report SUBSCRIBED so callers waiting on
+      // this status don't hang, but nothing actually streams.
+      if (_callback) _callback('SUBSCRIBED');
+      return chainable;
+    },
+    unsubscribe: async () => ({ error: null }),
+    send: async (_payload: any) => 'ok',
+  };
+  return chainable;
+},
   removeChannel: (_channel: any) => {},
   removeAllChannels: async () => {}
 };
